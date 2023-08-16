@@ -3,12 +3,16 @@
 #include "database.h"
 
 dpp::message buildResponseEmbed(std::string questionType, std::string username, std::string question, std::string avatar_url);
+dpp::message buildNsfwSettingsEmbed();
 
     int main()
-{
-    std::cout << "CHANGE ME!" << std::endl;
-    initDataBase("/home/otto/Proge/TODD-BOT/temp.db");
-    return 0;
+{   
+//FIXME:
+//! Change db path to be relational
+
+
+    // std::cout << "CHANGE ME!" << std::endl;
+    // initDataBase("/home/otto/Proge/TODD-BOT/temp.db");
     std::string tokenFilePath = "token.txt";
     std::string apiToken;
     std::ifstream tokenFile(tokenFilePath);
@@ -55,36 +59,7 @@ dpp::message buildResponseEmbed(std::string questionType, std::string username, 
                 event.reply(msg);
              }
              else if (event.command.get_command_name() == "togglensfw") {
-                dpp::message msg;
-                msg.add_embed(
-                    dpp::embed()
-                        .set_title("NSFW Settings")
-                        .set_description("Below you can choose from 3 different filtering modes: \n \n **DISABLE:**   Disables NSFW questions.\n **ALLOW:**   Allows NSFW questions.\n **ENABLE:**   Enables NSFW only questions.")
-                        .set_footer("This setting can only be altered by server owners")
-                );
-                msg.add_component(
-                    dpp::component().add_component(
-                        dpp::component()
-                        .set_label("DISABLE")
-                        .set_type(dpp::cot_button)
-                        .set:style(dpp::cos_success)
-                        .set_id("nsfw_disable")
-                    )
-                    .add_component(
-                        dpp::component()
-                        .set_type(dpp::cot_button)
-                        .set_label("ALLOW")
-                        .set_style(dpp::cos_primary)
-                        .set_id("nsfw_allow")
-                    )
-                    .add_component(
-                        dpp::component()
-                        .set_type(dpp::cot_button)
-                        .set_label("ENABLE")
-                        .set_style(dpp::cos_danger)
-                        .set_id("nsfw-enable")
-                    )
-                );
+                event.reply(buildNsfwSettingsEmbed());
              } });
 
 
@@ -146,4 +121,40 @@ dpp::message buildResponseEmbed(std::string questionType, std::string username, 
             .add_component(
                 dpp::component().set_label("Random").set_type(dpp::cot_button).set_style(dpp::cos_primary).set_id("random-button")));
     return(msg);
+}
+
+
+//TODO:
+    //* Make the buttons work
+    //* Read nsfw filter value from database
+    //* Write the changed value back
+    //* This should only be able to be triggered by server owners
+
+dpp::message buildNsfwSettingsEmbed() {
+    dpp::message msg;
+    msg.add_embed(
+        dpp::embed()
+            .set_title("NSFW Settings")
+            .set_description("Below you can choose from 3 different filtering modes: \n \n **DISABLE:**   Disables NSFW questions.\n **ALLOW:**   Allows NSFW questions.\n **ENABLE:**   Enables NSFW only questions.")
+            .set_footer(dpp::embed_footer().set_text("This setting can only be altered by server owners")));
+    msg.add_component(
+        dpp::component().add_component(
+                            dpp::component()
+                                .set_label("DISABLE")
+                                .set_type(dpp::cot_button)
+                                .set_style(dpp::cos_success)
+                                  .set_id("nsfw_disable"))
+            .add_component(
+                dpp::component()
+                    .set_type(dpp::cot_button)
+                    .set_label("ALLOW")
+                    .set_style(dpp::cos_primary)
+                    .set_id("nsfw_allow"))
+            .add_component(
+                dpp::component()
+                    .set_type(dpp::cot_button)
+                    .set_label("ENABLE")
+                    .set_style(dpp::cos_danger)
+                    .set_id("nsfw-enable")));
+    return msg;
 }
