@@ -1,12 +1,14 @@
 #include "config.h"
 #include "question-parser.h"
+#include "database.h"
 
 dpp::message buildResponseEmbed(std::string questionType, std::string username, std::string question, std::string avatar_url);
 
     int main()
 {
-
-
+    std::cout << "CHANGE ME!" << std::endl;
+    initDataBase("/home/otto/Proge/TODD-BOT/temp.db");
+    return 0;
     std::string tokenFilePath = "token.txt";
     std::string apiToken;
     std::ifstream tokenFile(tokenFilePath);
@@ -51,6 +53,38 @@ dpp::message buildResponseEmbed(std::string questionType, std::string username, 
                             dpp::component().set_label("Random").set_type(dpp::cot_button).set_style(dpp::cos_primary).set_id("random-button")));
 
                 event.reply(msg);
+             }
+             else if (event.command.get_command_name() == "togglensfw") {
+                dpp::message msg;
+                msg.add_embed(
+                    dpp::embed()
+                        .set_title("NSFW Settings")
+                        .set_description("Below you can choose from 3 different filtering modes: \n \n **DISABLE:**   Disables NSFW questions.\n **ALLOW:**   Allows NSFW questions.\n **ENABLE:**   Enables NSFW only questions.")
+                        .set_footer("This setting can only be altered by server owners")
+                );
+                msg.add_component(
+                    dpp::component().add_component(
+                        dpp::component()
+                        .set_label("DISABLE")
+                        .set_type(dpp::cot_button)
+                        .set:style(dpp::cos_success)
+                        .set_id("nsfw_disable")
+                    )
+                    .add_component(
+                        dpp::component()
+                        .set_type(dpp::cot_button)
+                        .set_label("ALLOW")
+                        .set_style(dpp::cos_primary)
+                        .set_id("nsfw_allow")
+                    )
+                    .add_component(
+                        dpp::component()
+                        .set_type(dpp::cot_button)
+                        .set_label("ENABLE")
+                        .set_style(dpp::cos_danger)
+                        .set_id("nsfw-enable")
+                    )
+                );
              } });
 
 
@@ -60,14 +94,14 @@ dpp::message buildResponseEmbed(std::string questionType, std::string username, 
 	            bot.global_command_create(
 	                dpp::slashcommand("ping", "Ping pong!", bot.me.id)
 	            );
-	        } });
-    bot.on_ready([&bot](const dpp::ready_t &event)
-                 {
-	        if (dpp::run_once<struct register_bot_commands>()) {
-	            bot.global_command_create(
-	                dpp::slashcommand("startgame", "Starts a game of truth or dare", bot.me.id)
-	            );
-	        } });
+                bot.global_command_create(
+                    dpp::slashcommand("startgame", "Starts a game of truth or dare", bot.me.id)
+                );
+                bot.global_command_create(
+                    dpp::slashcommand("togglensfw", "Change NSFW filter settings", bot.me.id)
+                );
+            } });
+
 
     bot.on_button_click([&bot](const dpp::button_click_t &event)
                         {
