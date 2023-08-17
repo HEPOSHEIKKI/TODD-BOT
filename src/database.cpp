@@ -7,8 +7,6 @@ int initDataBase(const char* filePath){
     sqlite3* DB;
     createDB(filePath);
     createTable(filePath);
-    // insertData(filePath, 1234567891234567890, 1234567891234567891, 1);
-    // getNsfwSetting(filePath, std::uint64_t(1114295088219164775));
     return 0;
 }
 

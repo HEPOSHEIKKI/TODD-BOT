@@ -12,9 +12,6 @@ dpp::message buildNsfwSettingsEmbed();
     std::string apiToken;
     std::ifstream tokenFile(tokenFilePath);
     initDataBase("database.db");
-    std::cout << JsonProcessor::getRandomQuestion("truths", std::uint64_t(1114295088219164775)) << std::endl;
-    std::cout << JsonProcessor::getRandomQuestion("dares", std::uint64_t(1114295088219164775)) << std::endl;
-    return 0;
 
     if (tokenFile.is_open())
     {
