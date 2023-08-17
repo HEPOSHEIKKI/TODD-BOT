@@ -12,8 +12,8 @@ dpp::message buildNsfwSettingsEmbed();
     std::string apiToken;
     std::ifstream tokenFile(tokenFilePath);
     initDataBase("database.db");
-    std::cout << JsonProcessor::getRandomQuestion("truths") << std::endl;
-    std::cout << JsonProcessor::getRandomQuestion("dares") << std::endl;
+    std::cout << JsonProcessor::getRandomQuestion("truths", std::uint64_t(1114295088219164775)) << std::endl;
+    std::cout << JsonProcessor::getRandomQuestion("dares", std::uint64_t(1114295088219164775)) << std::endl;
     return 0;
 
     if (tokenFile.is_open())
@@ -80,22 +80,22 @@ dpp::message buildNsfwSettingsEmbed();
     bot.on_button_click([&bot](const dpp::button_click_t &event)
                         {
         if (event.custom_id == "truth-button"){
-            dpp::message response = buildResponseEmbed("Truth", event.command.get_issuing_user().username, JsonProcessor::getRandomQuestion("truths"), event.command.get_issuing_user().get_avatar_url(32, dpp::i_webp, false));
+            dpp::message response = buildResponseEmbed("Truth", event.command.get_issuing_user().username, JsonProcessor::getRandomQuestion("truths", event.command.get_guild().id), event.command.get_issuing_user().get_avatar_url(32, dpp::i_webp, false));
             event.reply(response);
             }
         else if (event.custom_id == "dare-button") {
-            dpp::message response = buildResponseEmbed("Dare", event.command.get_issuing_user().username, JsonProcessor::getRandomQuestion("dares"), event.command.get_issuing_user().get_avatar_url(32, dpp::i_webp, false));
+            dpp::message response = buildResponseEmbed("Dare", event.command.get_issuing_user().username, JsonProcessor::getRandomQuestion("dares", event.command.get_guild().id), event.command.get_issuing_user().get_avatar_url(32, dpp::i_webp, false));
             event.reply(response);
         }
         else if (event.custom_id == "random-button") {
             srand(time(NULL) * rand());
             int randInt = rand() % 2;
             if (randInt == 2) {
-                dpp::message response = buildResponseEmbed("Truth", event.command.get_issuing_user().username, JsonProcessor::getRandomQuestion("truths"), event.command.get_issuing_user().get_avatar_url(32, dpp::i_webp, false));
+                dpp::message response = buildResponseEmbed("Truth", event.command.get_issuing_user().username, JsonProcessor::getRandomQuestion("truths", event.command.get_guild().id), event.command.get_issuing_user().get_avatar_url(32, dpp::i_webp, false));
                 event.reply(response);
             }
             else {
-                dpp::message response = buildResponseEmbed("Dare", event.command.get_issuing_user().username, JsonProcessor::getRandomQuestion("dares"), event.command.get_issuing_user().get_avatar_url(32, dpp::i_webp, false));
+                dpp::message response = buildResponseEmbed("Dare", event.command.get_issuing_user().username, JsonProcessor::getRandomQuestion("dares", event.command.get_guild().id), event.command.get_issuing_user().get_avatar_url(32, dpp::i_webp, false));
                 event.reply(response);
             }
         }

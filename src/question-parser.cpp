@@ -29,10 +29,31 @@ namespace JsonProcessor
         return data[category].get<std::vector<std::string>>();
     }
 
-    std::string getRandomQuestion(const std::string &category)
+    std::string getRandomQuestion(const std::string &category, std::uint64_t server_id)
     {
+        std::vector<std::string> questions;
         static json data = loadDataFromJson("questions.json");
-        std::vector<std::string> questions = getQuestions(data, category);
+        if (getNsfwSetting("database.db", server_id) == 3){
+            questions = getQuestions(data, category + "-nsfw");
+        }
+        else if (getNsfwSetting("database.db", server_id) == 2){
+            std::random_device rd;
+            std::mt19937 gen(rd());
+            std::discrete_distribution<> dist({40, 60});
+
+            int choice = dist(gen);
+
+            if (choice == 0){
+                questions = getQuestions(data, category + "-nsfw");
+            }
+            else {
+                questions = getQuestions(data, category);
+            }
+        }
+        else {
+            questions = getQuestions(data, category);
+        }
+        
 
         std::random_device rd;
         std::mt19937 rng(rd());
