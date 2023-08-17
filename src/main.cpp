@@ -36,26 +36,37 @@ dpp::message buildNsfwSettingsEmbed();
     bot.on_slashcommand([](const dpp::slashcommand_t & event)
                         {
 	         if (event.command.get_command_name() == "ping") {
-	            event.reply("Pong!");
+                event.thinking(false, dpp::utility::log_error());
+                dpp::message msg;
+                msg.set_content("Pong!");
+	            event.edit_original_response(msg);
 	        }
              else if (event.command.get_command_name() == "startgame"){
-                dpp::message msg;
-                msg.add_embed(
-                    dpp::embed()
-                        .set_title("Truth or Dare")
-                        .set_description("Have fun!"));
-                msg.add_component(
-                    dpp::component().add_component(
-                                        dpp::component().set_label("Truth").set_type(dpp::cot_button).set_style(dpp::cos_success).set_id("truth-button"))
-                        .add_component(
-                            dpp::component().set_label("Dare").set_type(dpp::cot_button).set_style(dpp::cos_danger).set_id("dare-button"))
-                        .add_component(
-                            dpp::component().set_label("Random").set_type(dpp::cot_button).set_style(dpp::cos_primary).set_id("random-button")));
+                event.thinking(false, [=](const dpp::confirmation_callback_t &result){
+                    if (!result.is_error()){
+                        dpp::message msg;
+                        msg.add_embed(
+                            dpp::embed()
+                                .set_title("Truth or Dare")
+                                .set_description("Have fun!"));
+                        msg.add_component(
+                            dpp::component().add_component(
+                                                dpp::component().set_label("Truth").set_type(dpp::cot_button).set_style(dpp::cos_success).set_id("truth-button"))
+                                .add_component(
+                                    dpp::component().set_label("Dare").set_type(dpp::cot_button).set_style(dpp::cos_danger).set_id("dare-button"))
+                                .add_component(
+                                    dpp::component().set_label("Random").set_type(dpp::cot_button).set_style(dpp::cos_primary).set_id("random-button")));
 
-                event.reply(msg);
+                        event.edit_original_response(msg);
+                    }
+                });
              }
              else if (event.command.get_command_name() == "togglensfw") {
-                event.reply(buildNsfwSettingsEmbed());
+                event.thinking(false, [=](const dpp::confirmation_callback_t &result) {
+                    if (!result.is_error()) {
+                        event.edit_original_response(buildNsfwSettingsEmbed());
+                    }
+                });
              } });
 
 
@@ -74,40 +85,69 @@ dpp::message buildNsfwSettingsEmbed();
             } });
 
 
-    bot.on_button_click([&bot](const dpp::button_click_t &event)
-                        {
+    bot.on_button_click([&bot](const dpp::button_click_t &event){
         if (event.custom_id == "truth-button"){
-            dpp::message response = buildResponseEmbed("Truth", event.command.get_issuing_user().username, JsonProcessor::getRandomQuestion("truths", event.command.get_guild().id), event.command.get_issuing_user().get_avatar_url(32, dpp::i_webp, false));
-            event.reply(response);
+            event.thinking(false, [=](const dpp::confirmation_callback_t &result){
+                if (!result.is_error()){
+                    dpp::message response = buildResponseEmbed("Truth", event.command.get_issuing_user().username, JsonProcessor::getRandomQuestion("truths", event.command.get_guild().id), event.command.get_issuing_user().get_avatar_url(32, dpp::i_webp, false));
+                    event.edit_original_response(response);
+                }
+            });
             }
         else if (event.custom_id == "dare-button") {
-            dpp::message response = buildResponseEmbed("Dare", event.command.get_issuing_user().username, JsonProcessor::getRandomQuestion("dares", event.command.get_guild().id), event.command.get_issuing_user().get_avatar_url(32, dpp::i_webp, false));
-            event.reply(response);
+            event.thinking(false, [=](const dpp::confirmation_callback_t &result){
+                if (!result.is_error()){
+                    dpp::message response = buildResponseEmbed("Dare", event.command.get_issuing_user().username, JsonProcessor::getRandomQuestion("dares", event.command.get_guild().id), event.command.get_issuing_user().get_avatar_url(32, dpp::i_webp, false));
+                    event.edit_original_response(response);
+                }
+            });
         }
         else if (event.custom_id == "random-button") {
-            srand(time(NULL) * rand());
-            int randInt = rand() % 2;
-            if (randInt == 2) {
-                dpp::message response = buildResponseEmbed("Truth", event.command.get_issuing_user().username, JsonProcessor::getRandomQuestion("truths", event.command.get_guild().id), event.command.get_issuing_user().get_avatar_url(32, dpp::i_webp, false));
-                event.reply(response);
-            }
-            else {
-                dpp::message response = buildResponseEmbed("Dare", event.command.get_issuing_user().username, JsonProcessor::getRandomQuestion("dares", event.command.get_guild().id), event.command.get_issuing_user().get_avatar_url(32, dpp::i_webp, false));
-                event.reply(response);
-            }
-        }
+            event.thinking(false, [=](const dpp::confirmation_callback_t &result){
+                if (!result.is_error()){
+                    srand(time(NULL) * rand());
+                    int randInt = rand() % 2;
+                    if (randInt == 2) {
+                        dpp::message response = buildResponseEmbed("Truth", event.command.get_issuing_user().username, JsonProcessor::getRandomQuestion("truths", event.command.get_guild().id), event.command.get_issuing_user().get_avatar_url(32, dpp::i_webp, false));
+                        event.edit_original_response(response);
+                        }
+                    else {
+                        dpp::message response = buildResponseEmbed("Dare", event.command.get_issuing_user().username, JsonProcessor::getRandomQuestion("dares", event.command.get_guild().id), event.command.get_issuing_user().get_avatar_url(32, dpp::i_webp, false));
+                        event.edit_original_response(response);
+                        }
+                    }
+                    });
+            }   
         //TODO: add embeds to the responses
         else if (event.custom_id == "nsfw_disable") {
-            std::cout << std::to_string(event.command.get_guild().id) << std::endl;
-            event.reply("NSFW has been disabled");
+            event.thinking(false, [=](const dpp::confirmation_callback_t &result){
+                if (!result.is_error()){
+                    std::cout << std::to_string(event.command.get_guild().id) << std::endl;
+                    dpp::message msg;
+                    msg.set_content("NSFW has been disabled");
+                    event.edit_original_response(msg);
+                }
+            });
             insertData("database.db", event.command.get_guild().id, std::uint64_t(NULL), 1);
         }
         else if (event.custom_id == "nsfw_allow") {
-            event.reply("NSFW has been allowed");
+            event.thinking(false, [=](const dpp::confirmation_callback_t &result){
+                if (!result.is_error()){
+                    dpp::message msg;
+                    msg.set_content("NSFW has been allowed");
+                    event.edit_original_response(msg);
+                }
+            });
             insertData("database.db", event.command.get_guild().id, std::uint64_t(NULL), 2);
         }
         else if (event.custom_id == "nsfw_enable") {
-            event.reply("NSFW has been enabled, normal questions have been disabled.");
+            event.thinking(false, [=](const dpp::confirmation_callback_t &result){
+                if (!result.is_error()){
+                    dpp::message msg;
+                    msg.set_content("NSFW has been enabled, normal questions have been disabled");
+                    event.edit_original_response(msg);
+                }
+            });
             insertData("database.db", event.command.get_guild().id, std::uint64_t(NULL), 3);
         }
         });
@@ -157,14 +197,14 @@ dpp::message buildNsfwSettingsEmbed() {
                                   .set_id("nsfw_disable"))
             .add_component(
                 dpp::component()
-                    .set_type(dpp::cot_button)
                     .set_label("ALLOW")
+                    .set_type(dpp::cot_button)
                     .set_style(dpp::cos_primary)
                     .set_id("nsfw_allow"))
             .add_component(
                 dpp::component()
-                    .set_type(dpp::cot_button)
                     .set_label("ENABLE")
+                    .set_type(dpp::cot_button)
                     .set_style(dpp::cos_danger)
                     .set_id("nsfw_enable")));
     return msg;
