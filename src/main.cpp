@@ -5,17 +5,16 @@
 dpp::message buildResponseEmbed(std::string questionType, std::string username, std::string question, std::string avatar_url);
 dpp::message buildNsfwSettingsEmbed();
 
+
     int main()
 {   
-//FIXME:
-//! Change db path to be relational
-
-
-    // std::cout << "CHANGE ME!" << std::endl;
-    // initDataBase("/home/otto/Proge/TODD-BOT/temp.db");
     std::string tokenFilePath = "token.txt";
     std::string apiToken;
     std::ifstream tokenFile(tokenFilePath);
+    initDataBase("database.db");
+    std::cout << JsonProcessor::getRandomQuestion("truths") << std::endl;
+    std::cout << JsonProcessor::getRandomQuestion("dares") << std::endl;
+    return 0;
 
     if (tokenFile.is_open())
     {
@@ -47,7 +46,7 @@ dpp::message buildNsfwSettingsEmbed();
                 msg.add_embed(
                     dpp::embed()
                         .set_title("Truth or Dare")
-                        .set_description("Why did I sign up for this"));
+                        .set_description("Have fun!"));
                 msg.add_component(
                     dpp::component().add_component(
                                         dpp::component().set_label("Truth").set_type(dpp::cot_button).set_style(dpp::cos_success).set_id("truth-button"))
@@ -99,7 +98,22 @@ dpp::message buildNsfwSettingsEmbed();
                 dpp::message response = buildResponseEmbed("Dare", event.command.get_issuing_user().username, JsonProcessor::getRandomQuestion("dares"), event.command.get_issuing_user().get_avatar_url(32, dpp::i_webp, false));
                 event.reply(response);
             }
-        }});
+        }
+        //TODO: add embeds to the responses
+        else if (event.custom_id == "nsfw_disable") {
+            std::cout << std::to_string(event.command.get_guild().id) << std::endl;
+            event.reply("NSFW has been disabled");
+            insertData("database.db", event.command.get_guild().id, std::uint64_t(NULL), 1);
+        }
+        else if (event.custom_id == "nsfw_allow") {
+            event.reply("NSFW has been allowed");
+            insertData("database.db", event.command.get_guild().id, std::uint64_t(NULL), 2);
+        }
+        else if (event.custom_id == "nsfw_enable") {
+            event.reply("NSFW has been enabled, normal questions have been disabled.");
+            insertData("database.db", event.command.get_guild().id, std::uint64_t(NULL), 3);
+        }
+        });
     bot.start(dpp::st_wait);
 }
 
@@ -125,10 +139,10 @@ dpp::message buildResponseEmbed(std::string questionType, std::string username, 
 
 
 //TODO:
-    //* Make the buttons work
-    //* Read nsfw filter value from database
-    //* Write the changed value back
-    //* This should only be able to be triggered by server owners
+    //* Decide if this feature should be changeable by normal users or only server mods
+    //* CONS: A mod has to step in every time the setting needs changing
+    //* PROS: Some servers might want to disable NSFW and the users could change it
+    //* Could of course change the allowmode too but I'm too lazy to do it now
 
 dpp::message buildNsfwSettingsEmbed() {
     dpp::message msg;
@@ -155,6 +169,6 @@ dpp::message buildNsfwSettingsEmbed() {
                     .set_type(dpp::cot_button)
                     .set_label("ENABLE")
                     .set_style(dpp::cos_danger)
-                    .set_id("nsfw-enable")));
+                    .set_id("nsfw_enable")));
     return msg;
 }

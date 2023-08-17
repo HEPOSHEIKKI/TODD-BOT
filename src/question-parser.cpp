@@ -1,5 +1,6 @@
 #include "config.h"
 #include "question-parser.h"
+#include "database.h"
 using json = nlohmann::json;
 
 namespace JsonProcessor

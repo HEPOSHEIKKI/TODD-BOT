@@ -10,5 +10,17 @@
         "Do your best impression of a famous celebrity.",
         "Go outside and shout 'I love C++ programming!'",
         "Do 10 jumping jacks."
+    ],
+    "truths-nsfw": [
+        "What's your biggest turn off?",
+        "What's the largest age gap between you and your sexual partners?",
+        "Have you ever filmed a sex tape?",
+        "What's your biggest turn on?"
+    ],
+    "dares-nsfw": [
+        "Send your ex a message saying you miss them.",
+        "Close your eyes, pick a random phone contact and leave them a dirty voicemail.",
+        "FaceTime your most recent contact, burp, then hang up.",
+        "Perform a seductive dance in front of the group."
     ]
 }

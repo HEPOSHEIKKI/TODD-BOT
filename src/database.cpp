@@ -7,7 +7,8 @@ int initDataBase(const char* filePath){
     sqlite3* DB;
     createDB(filePath);
     createTable(filePath);
-    insertData(filePath, 1234567891234567890, 1234567891234567891, 1);
+    // insertData(filePath, 1234567891234567890, 1234567891234567891, 1);
+    // getNsfwSetting(filePath, std::uint64_t(1114295088219164775));
     return 0;
 }
 
@@ -23,7 +24,9 @@ int createDB(const char* filePath){
 int createTable(const char* filePath) {
     sqlite3* DB;
 
-    std::string sql = "CREATE TABLE IF NOT EXISTS servers(id BIGINT UNIQUE NOT NULL, main_channel BIGINT, nsfw_enabled BOOL DEFAULT 0);";
+//* Value 1 for nsfw means disabled, 2 allowed, 3 enabled
+
+    std::string sql = "CREATE TABLE IF NOT EXISTS servers(id BIGINT UNIQUE NOT NULL, main_channel BIGINT, nsfw_enabled INT DEFAULT 0);";
 
     try {
         int exit = 0;
@@ -47,7 +50,9 @@ int createTable(const char* filePath) {
     return 0;
 }
 
-int insertData(const char* filePath, std::uint64_t server_id, std::uint64_t main_channel_id = NULL, bool nsfw_enabled = NULL){
+//FIXME: don't set the main_channel to 0 every time. Too lazy to fix it now due to the main_channel having no use yet
+
+int insertData(const char* filePath, std::uint64_t server_id, std::uint64_t main_channel_id = std::uint64_t(NULL), int nsfw_enabled = 0){
     sqlite3* DB;
     char* messageError;
 
@@ -65,4 +70,25 @@ int insertData(const char* filePath, std::uint64_t server_id, std::uint64_t main
     
 
     return 0;
-} 
+}
+
+int getNsfwSetting(const char* filePath, std::uint64_t server_id) {
+    sqlite3* DB;
+    char* messageError;
+    
+    int exit = sqlite3_open(filePath, &DB);
+    std::string sql = "SELECT nsfw_enabled FROM servers WHERE id = " + std::to_string(server_id) + ";";
+    sqlite3_stmt *stmt;
+    exit = sqlite3_prepare_v2(DB, sql.c_str(), -1, &stmt, NULL);
+
+    if (exit != SQLITE_OK) {
+        std::cerr << "Error SELECT FROM" << std::endl;
+        return -1;
+    }
+    exit = sqlite3_step(stmt);
+
+    int value = sqlite3_column_int(stmt, 0);
+    sqlite3_finalize(stmt);
+    return value;
+
+}
