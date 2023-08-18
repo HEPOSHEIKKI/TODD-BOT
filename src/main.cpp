@@ -86,11 +86,16 @@ dpp::message buildNsfwSettingsEmbed();
 
 
     bot.on_button_click([&bot](const dpp::button_click_t &event){
+        std::cout << "button clicked" << std::endl;
         if (event.custom_id == "truth-button"){
+            std::cout << "truth-button" << std::endl;
             event.thinking(false, [=](const dpp::confirmation_callback_t &result){
                 if (!result.is_error()){
                     dpp::message response = buildResponseEmbed("Truth", event.command.get_issuing_user().username, JsonProcessor::getRandomQuestion("truths", event.command.get_guild().id), event.command.get_issuing_user().get_avatar_url(32, dpp::i_webp, false));
                     event.edit_original_response(response);
+                }
+                else{
+                    std::cout << result.get_error().message << std::endl;
                 }
             });
             }

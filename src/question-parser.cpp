@@ -31,12 +31,15 @@ namespace JsonProcessor
 
     std::string getRandomQuestion(const std::string &category, std::uint64_t server_id)
     {
+        std::cout << "getRandomQuestion" << std::endl;
         std::vector<std::string> questions;
         static json data = loadDataFromJson("questions.json");
         if (getNsfwSetting("database.db", server_id) == 3){
+            std::cout << getNsfwSetting("database.db", server_id) << std::endl;
             questions = getQuestions(data, category + "-nsfw");
         }
         else if (getNsfwSetting("database.db", server_id) == 2){
+            std::cout << "nsfw = 2" << std::endl;
             std::random_device rd;
             std::mt19937 gen(rd());
             std::discrete_distribution<> dist({40, 60});
@@ -51,6 +54,7 @@ namespace JsonProcessor
             }
         }
         else {
+            std::cout << "nsfw == 1 probably" << std::endl;
             questions = getQuestions(data, category);
         }
         

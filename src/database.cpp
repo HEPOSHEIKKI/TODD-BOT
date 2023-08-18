@@ -7,6 +7,7 @@ int initDataBase(const char* filePath){
     sqlite3* DB;
     createDB(filePath);
     createTable(filePath);
+    sqlite3_close(DB);
     return 0;
 }
 
@@ -63,9 +64,10 @@ int insertData(const char* filePath, std::uint64_t server_id, std::uint64_t main
     exit = sqlite3_exec(DB, sql.c_str(), NULL, 0, &messageError);
     if (exit != SQLITE_OK){
         std::cerr << "Error INSERT INTO" << std::endl;
+        std::cerr << messageError << std::endl;
         sqlite3_free(messageError);
     }
-    
+    sqlite3_close(DB);
 
     return 0;
 }
@@ -87,6 +89,8 @@ int getNsfwSetting(const char* filePath, std::uint64_t server_id) {
 
     int value = sqlite3_column_int(stmt, 0);
     sqlite3_finalize(stmt);
+    sqlite3_close(DB);
+    std::cout << "nsfw get" << std::endl;
     return value;
 
 }
