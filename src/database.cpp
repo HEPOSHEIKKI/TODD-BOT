@@ -57,7 +57,7 @@ int insertData(const char* filePath, std::uint64_t server_id, std::uint64_t main
 
     int exit = sqlite3_open(filePath, &DB);
 
-    // INSERT OR IGNORE INTO servers: this will create a row with the provided server id on id if not exists
+    //* INSERT OR IGNORE INTO servers: this will create a row with the provided server id on id if not exists
     std::string sql = "INSERT OR IGNORE INTO servers (id, main_channel, nsfw_enabled) VALUES('" + std::to_string(server_id) + "', '" + std::to_string(main_channel_id) + "', " + std::to_string(nsfw_enabled) + ");" +
                       "UPDATE servers SET nsfw_enabled = " + std::to_string(nsfw_enabled) + ", main_channel = " + std::to_string(main_channel_id) + " WHERE id = " + std::to_string(server_id) + ";";
     exit = sqlite3_exec(DB, sql.c_str(), NULL, 0, &messageError);

@@ -41,6 +41,24 @@ dpp::message buildNsfwSettingsEmbed();
                 msg.set_content("Pong!");
 	            event.edit_original_response(msg);
 	        }
+             else if (event.command.get_command_name() == "help"){
+                event.thinking(false, [=](const dpp::confirmation_callback_t &result){
+                    if (!result.is_error()){
+                        dpp::message msg;
+                        msg.add_embed(
+                            dpp::embed()
+                                .set_title("HELP")
+                                .set_description("*COMMANDS:*")
+                                .add_field("/help", "Print out this help message", false)
+                                .add_field("/togglensfw", "Toggle NSFW questions", false)
+                                .add_field("/startgame", "Summon the bot and start a game", false)
+                                .set_color(1752220)
+                                .set_author("Requested by " + event.command.get_issuing_user().username, "", event.command.get_issuing_user().get_avatar_url(32, dpp::i_webp, false))
+                                );
+                        event.edit_original_response(msg);
+                    }
+                });
+             }
              else if (event.command.get_command_name() == "startgame"){
                 event.thinking(false, [=](const dpp::confirmation_callback_t &result){
                     if (!result.is_error()){
@@ -82,6 +100,9 @@ dpp::message buildNsfwSettingsEmbed();
                 bot.global_command_create(
                     dpp::slashcommand("togglensfw", "Change NSFW filter settings", bot.me.id)
                 );
+                bot.global_command_create(
+                    dpp::slashcommand("help", "Print out a help message", bot.me.id)
+                );
             } });
 
 
@@ -118,12 +139,16 @@ dpp::message buildNsfwSettingsEmbed();
                     }
                     });
             }   
-        //TODO: add embeds to the responses
         else if (event.custom_id == "nsfw_disable") {
             event.thinking(false, [=](const dpp::confirmation_callback_t &result){
                 if (!result.is_error()){
                     dpp::message msg;
-                    msg.set_content("NSFW has been disabled");
+                    msg.add_embed(
+                        dpp::embed()
+                            .set_title("NSFW has been disabled")
+                            .set_description("You will only see SFW messages")
+                            .set_author("Modified by " + event.command.get_issuing_user().username, "", event.command.get_issuing_user().get_avatar_url(32, dpp::i_webp, false))
+                            .set_color(5763719));
                     event.edit_original_response(msg);
                 }
             });
@@ -133,7 +158,12 @@ dpp::message buildNsfwSettingsEmbed();
             event.thinking(false, [=](const dpp::confirmation_callback_t &result){
                 if (!result.is_error()){
                     dpp::message msg;
-                    msg.set_content("NSFW has been allowed");
+                    msg.add_embed(
+                        dpp::embed()
+                            .set_title("NSFW has been allowed")
+                            .set_description("You will see NSFW messages mixed with SFW messages")
+                            .set_author("Modified by " + event.command.get_issuing_user().username, "", event.command.get_issuing_user().get_avatar_url(32, dpp::i_webp, false))
+                            .set_color(16776960));
                     event.edit_original_response(msg);
                 }
             });
@@ -143,7 +173,12 @@ dpp::message buildNsfwSettingsEmbed();
             event.thinking(false, [=](const dpp::confirmation_callback_t &result){
                 if (!result.is_error()){
                     dpp::message msg;
-                    msg.set_content("NSFW has been enabled, normal questions have been disabled");
+                    msg.add_embed(
+                        dpp::embed()
+                            .set_title("NSFW has been enabled")
+                            .set_description("You will only see NSFW messages")
+                            .set_author("Modified by " + event.command.get_issuing_user().username, "", event.command.get_issuing_user().get_avatar_url(32, dpp::i_webp, false))
+                            .set_color(15548997));
                     event.edit_original_response(msg);
                 }
             });
@@ -173,12 +208,6 @@ dpp::message buildResponseEmbed(std::string questionType, std::string username, 
     return(msg);
 }
 
-
-//TODO:
-    //* Decide if this feature should be changeable by normal users or only server mods
-    //* CONS: A mod has to step in every time the setting needs changing
-    //* PROS: Some servers might want to disable NSFW and the users could change it
-    //* Could of course change the allowmode too but I'm too lazy to do it now
 
 dpp::message buildNsfwSettingsEmbed() {
     dpp::message msg;
