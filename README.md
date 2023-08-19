@@ -20,7 +20,7 @@ Currently we have feature parity with all the non-paywalled features, but I will
 To build the project first make sure you have [DPP](https://dpp.dev) installed.
 
 ```bash
-  g++ -std=c++17 -o bot src/main.cpp src/question-parser.cpp -ldpp
+  g++ -std=c++17 -o bot src/main.cpp src/question-parser.cpp src/database.cpp -ldpp -lsqlite3 
 ```
 ## Installation
 
