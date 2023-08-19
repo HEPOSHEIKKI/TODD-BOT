@@ -8,7 +8,7 @@
 
 namespace JsonProcessor
 {
-    std::string getRandomQuestion(const std::string &category);
+    std::string getRandomQuestion(const std::string &category, std::uint64_t server_id);
 }
 
 #endif // JSON_PROCESSOR_H

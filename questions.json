@@ -10,5 +10,17 @@
         "Do your best impression of a famous celebrity.",
         "Go outside and shout 'I love C++ programming!'",
         "Do 10 jumping jacks."
+    ],
+    "truths-nsfw": [
+        "This is an nsfw truth",
+        "This is an nsfw truth",
+        "This is an nsfw truth",
+        "This is an nsfw truth"
+    ],
+    "dares-nsfw": [
+        "this is an nsfw dare",
+        "this is an nsfw dare",
+        "this is an nsfw dare",
+        "this is an nsfw dare"
     ]
 }
